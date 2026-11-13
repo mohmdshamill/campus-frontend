@@ -178,7 +178,7 @@ export const ResourcesPage: React.FC = () => {
           </p>
         </div>
 
-        {(isCoordinator || isSuperAdmin) && (
+        {isSuperAdmin && (
           <Button
             variant="primary"
             leftIcon={<Plus className="w-4 h-4" />}

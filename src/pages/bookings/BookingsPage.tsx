@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { formatClock12, formatDateDMY, parseBookingPurpose } from '../../utils/time';
 import { bookingsApi } from '../../api/bookings';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
@@ -208,6 +209,7 @@ export const BookingsPage: React.FC = () => {
                 <tr>
                   <th className="px-6 py-3.5">Code / Purpose</th>
                   <th className="px-6 py-3.5">Resource & Dept</th>
+                  <th className="px-6 py-3.5">Booked For (Dept / Class)</th>
                   <th className="px-6 py-3.5">Requested By</th>
                   <th className="px-6 py-3.5">Scheduled Interval</th>
                   <th className="px-6 py-3.5">Status</th>
@@ -215,12 +217,14 @@ export const BookingsPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {bookings.map((b) => (
+                {bookings.map((b) => {
+                  const info = parseBookingPurpose(b.purpose);
+                  return (
                   <tr key={b.id} className="hover:bg-slate-50/70 transition-colors">
                     <td className="px-6 py-4">
                       <span className="font-mono font-bold text-slate-900">{b.bookingCode}</span>
                       <p className="text-slate-500 font-medium text-[11px] mt-0.5 line-clamp-1">
-                        {b.purpose}
+                        {info.purpose}
                       </p>
                     </td>
 
@@ -232,17 +236,21 @@ export const BookingsPage: React.FC = () => {
                     </td>
 
                     <td className="px-6 py-4">
+                      <p className="font-semibold text-slate-800">{info.department || '-'}</p>
+                      {info.className && <p className="text-[11px] text-brand-700 font-semibold">{info.className}</p>}
+                    </td>
+
+                    <td className="px-6 py-4">
                       <p className="font-bold text-slate-800">{b.user.name}</p>
                       <p className="text-[11px] text-slate-400 font-mono">{b.user.collegeId}</p>
                     </td>
 
                     <td className="px-6 py-4">
                       <p className="font-semibold text-slate-800">
-                        {new Date(b.startDateTime).toLocaleDateString()}
+                        {formatDateDMY(b.startDateTime)}
                       </p>
                       <p className="text-[11px] text-slate-500 font-mono">
-                        {new Date(b.startDateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} -{' '}
-                        {new Date(b.endDateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {formatClock12(b.startDateTime)} - {formatClock12(b.endDateTime)}
                       </p>
                     </td>
 
@@ -298,7 +306,8 @@ export const BookingsPage: React.FC = () => {
                       </div>
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>

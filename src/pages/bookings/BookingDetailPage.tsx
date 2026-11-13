@@ -1,3 +1,4 @@
+import { formatClock12, formatDateDMY, parseBookingPurpose } from '../../utils/time';
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { bookingsApi } from '../../api/bookings';
@@ -130,8 +131,14 @@ export const BookingDetailPage: React.FC = () => {
               <Badge status={booking.status} size="sm" />
             </div>
             <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
-              {booking.purpose}
+              {parseBookingPurpose(booking.purpose).purpose}
             </h1>
+            {parseBookingPurpose(booking.purpose).department && (
+              <p className="text-sm font-semibold text-brand-700 mt-1">
+                {parseBookingPurpose(booking.purpose).department}
+                {parseBookingPurpose(booking.purpose).className ? ` — ${parseBookingPurpose(booking.purpose).className}` : ''}
+              </p>
+            )}
             <p className="text-xs text-slate-500 mt-1">
               Created on {new Date(booking.createdAt).toLocaleString()}
             </p>
@@ -208,11 +215,10 @@ export const BookingDetailPage: React.FC = () => {
           <div className="p-4 rounded-2xl bg-slate-50/70 border border-slate-100 space-y-1">
             <p className="font-bold text-slate-400 uppercase text-[10px]">Reserved Schedule</p>
             <p className="text-sm font-bold text-slate-800">
-              {new Date(booking.startDateTime).toLocaleDateString()}
+              {formatDateDMY(booking.startDateTime)}
             </p>
             <p className="text-slate-500 font-mono">
-              {new Date(booking.startDateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} -{' '}
-              {new Date(booking.endDateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              {formatClock12(booking.startDateTime)} - {formatClock12(booking.endDateTime)}
             </p>
           </div>
 
