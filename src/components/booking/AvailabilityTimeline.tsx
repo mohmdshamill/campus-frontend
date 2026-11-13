@@ -70,6 +70,9 @@ export const AvailabilityTimeline: React.FC<AvailabilityTimelineProps> = ({
     if (item.type === 'COLLEGE_EVENT') {
       return 'bg-purple-600/90 border-purple-700 text-white';
     }
+    if (item.status === 'REJECTED') {
+      return 'bg-slate-500/90 border-slate-600 text-white';
+    }
     if (item.status === 'APPROVED') {
       return 'bg-indigo-600/90 border-indigo-700 text-white';
     }
